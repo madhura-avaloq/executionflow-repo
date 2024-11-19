@@ -7,15 +7,27 @@ on:
         required: false
         default: val
         type: string
+    outputs:
+      result:
+        description: Result of deployment operation
+        value: ${{ jobs.deploy.outcome }}
+
+    # secrets: 
+    #   some-secret:
+    #     required: false
 jobs:
   deploy:
+    outputs:
+      outcome: ${{ steps.set-result.outputs.step-result }}
     runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/download-artifact@v3
         with:
-          name: ${{inputs.artifact-name }}
+          name: ${{ inputs.artifact-name }}
       - name: List Files
         run: ls
       - name: Output Information
         run: echo "Deploying and Uploading"
+      - name: Set result Output
+        run: echo "::set-output name=step-result::success"
